@@ -12,9 +12,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 force;          // The overall force we use to move the player
     private float x, y, z;          // Force components       
     private float originalSpeed;    // Used to reset the speed after running   
-    private bool isGrounded,        // Used to check if the player is touching the ground
-                canJump;
-    private int jumpsCounter;       // Count the number of jumps
+    private bool isGrounded;        // Used to check if the player is touching the ground
     private AudioSource audioSource; 
 
     //private Vector3 offset;
@@ -25,24 +23,13 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed, 
                 runSpeed, 
                 jumpSpeed;
-    //public GameObject camera;
-    public int totalJumps;
-
-    public Image powerupSprite;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>(); 
         originalSpeed = walkSpeed;          // Set the speed reset variable
         //offset = camera.transform.position - transform.position;
-        canJump = true;
         audioSource = this.gameObject.GetComponent<AudioSource>();
-    }
-
-    private void Update()
-    {
-        // At each frame, let the camera follow the player with an offset
-        //camera.transform.position = transform.position + offset;
     }
 
     // Check collisions
@@ -52,7 +39,6 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.tag == "Enviromant")
         {  
             isGrounded = true;              // Set player to grounded
-            jumpsCounter = totalJumps;      // Reset jumps
         }
     }
 
@@ -85,13 +71,10 @@ public class PlayerMovement : MonoBehaviour
 
         // If the player is on the ground or with one jump left
         // and the player presses the spacebar ONCE
-        if ( (isGrounded || jumpsCounter > 0) && canJump  && Input.GetKeyDown(KeyCode.Space))
+        if ( isGrounded  && Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine("JumpDelay");
-
             movementInput.y = 1.0f;                           // Set vertical versor
             isGrounded = false;                 // The player is no more on the ground
-            jumpsCounter = jumpsCounter - 1;    // Decrement the jumps counter
             //audioSource.Play();
         }
         else
@@ -114,18 +97,5 @@ public class PlayerMovement : MonoBehaviour
 
         rb.velocity = new Vector3(movementInput.x * walkSpeed, rb.velocity.y, movementInput.z * walkSpeed);
         rb.AddForce(force);
-    }
-
-    public void AddDoubleJump()
-    {
-        jumpsCounter++;
-        totalJumps = 2;
-        powerupSprite.color = Color.white;
-    }
-
-    IEnumerator JumpDelay(){
-        canJump = false;
-        yield return new WaitForSeconds(0.1f);
-        canJump = true;
     }
 }
