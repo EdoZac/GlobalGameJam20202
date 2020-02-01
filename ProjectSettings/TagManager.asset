@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enviromant
+  - Cube1
+  - PlayerSwitch
+  - Switch2
+  - Cubo2
   layers:
   - Default
   - TransparentFX
